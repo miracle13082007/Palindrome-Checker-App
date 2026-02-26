@@ -1,43 +1,104 @@
 import java.util.Scanner;
-import java.util.Deque;
-import java.util.LinkedList;
+
+// Node class for Singly Linked List
+class Node {
+    char data;
+    Node next;
+
+    Node(char data) {
+        this.data = data;
+        this.next = null;
+    }
+}
 
 public class PalindromeCheckerApp {
+
+    // Convert String to Linked List
+    public static Node createLinkedList(String input) {
+        Node head = null;
+        Node tail = null;
+
+        for (int i = 0; i < input.length(); i++) {
+            Node newNode = new Node(input.charAt(i));
+
+            if (head == null) {
+                head = newNode;
+                tail = newNode;
+            } else {
+                tail.next = newNode;
+                tail = newNode;
+            }
+        }
+        return head;
+    }
+
+    // Reverse Linked List
+    public static Node reverse(Node head) {
+        Node prev = null;
+        Node current = head;
+        Node next = null;
+
+        while (current != null) {
+            next = current.next;
+            current.next = prev;
+            prev = current;
+            current = next;
+        }
+        return prev;
+    }
+
+    // Check Palindrome
+    public static boolean isPalindrome(Node head) {
+
+        if (head == null || head.next == null)
+            return true;
+
+        Node slow = head;
+        Node fast = head;
+
+        // Find middle using fast & slow pointer
+        while (fast.next != null && fast.next.next != null) {
+            slow = slow.next;
+            fast = fast.next.next;
+        }
+
+        // Reverse second half
+        Node secondHalf = reverse(slow.next);
+
+        Node firstHalf = head;
+        Node temp = secondHalf;
+
+        // Compare both halves
+        while (temp != null) {
+            if (firstHalf.data != temp.data) {
+                return false;
+            }
+            firstHalf = firstHalf.next;
+            temp = temp.next;
+        }
+
+        return true;
+    }
 
     public static void main(String[] args) {
 
         Scanner scanner = new Scanner(System.in);
-        Deque<Character> deque = new LinkedList<>();
 
         System.out.println("Palindrome Checker App");
-        System.out.println("UC7: Deque-Based Optimized Palindrome Checker");
-        System.out.print("Enter a string: ");
+        System.out.println("UC8: Linked List Based Palindrome Checker");
 
+        System.out.print("Enter a string: ");
         String input = scanner.nextLine();
 
-        // Insert characters into deque
-        for (int i = 0; i < input.length(); i++) {
-            deque.addLast(input.charAt(i));
-        }
+        // Convert to lowercase (optional improvement)
+        input = input.toLowerCase();
 
-        boolean isPalindrome = true;
+        Node head = createLinkedList(input);
 
-        // Compare front and rear elements
-        while (deque.size() > 1) {
-            char front = deque.removeFirst();
-            char rear = deque.removeLast();
-
-            if (front != rear) {
-                isPalindrome = false;
-                break;
-            }
-        }
-
-        // Print result
-        if (isPalindrome) {
-            System.out.println("The given string is a Palindrome.");
+        if (isPalindrome(head)) {
+            System.out.println("Result: The given string is a Palindrome.");
         } else {
-            System.out.println("The given string is NOT a Palindrome.");
+            System.out.println("Result: The given string is NOT a Palindrome.");
         }
 
         scanner.close();
